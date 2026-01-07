@@ -24,7 +24,7 @@ Version :
 BetaVersion - N/A
 ---------------------------
 |Status |
-
+|-----------|
 |Phone : 🟢|
 
 |Mac : 🟢|
