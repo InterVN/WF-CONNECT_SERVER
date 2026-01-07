@@ -1,5 +1,5 @@
 ---------------------------
-      BETA VERSION
+BETA VERSION
 
 User: admin
 
