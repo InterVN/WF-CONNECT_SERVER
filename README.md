@@ -29,6 +29,6 @@ Mac : 🟢
 PC : 🔴
 
 
-|🌐Website: https://intervn.github.io/WF-CONNECT_SERVER/ |
+|🌐 Website: [WF CONNECT SERVER](https://intervn.github.io/WF-CONNECT_SERVER/)|
 |---------------------------------------------------------|
 
