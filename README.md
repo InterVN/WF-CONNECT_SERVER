@@ -9,7 +9,7 @@ Pass: sub010-intervn
 ---------------------------
 Connect_server
 
-Support FF&FFMAX
+Support FF&FFMAX 🌐
 ---------------------------
 Power By MTEDITOR & INTERVN 
 
@@ -27,4 +27,6 @@ Phone : 🟢
 Mac : 🟢
 
 PC : 🔴
+
+Website: https://intervn.github.io/WF-CONNECT_SERVER/
 
