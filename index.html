@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIMCONNECTFF-DPI BOOSTER</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Roboto+Mono:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto Mono', monospace;
+            color: #00ff41;
+            min-height: 100vh;
+            background: #000000;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body.unlocked {
+            overflow-y: auto;
+        }
+
+        canvas#particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Thời gian hiện tại góc trái trên */
+        #current-time {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 20px;
+            font-size: 1em;
+            color: #39ff14;
+            text-shadow: 0 0 10px #00ff41;
+            z-index: 99;
+        }
+
+        /* Beta version badge cho admin */
+        #beta-badge {
+            display: none;
+            position: fixed;
+            top: 15px;
+            right: 80px;
+            background: rgba(255, 255, 0, 0.2);
+            color: #ffff66;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #ffff66;
+            text-shadow: 0 0 10px #ffff66;
+            z-index: 99;
+        }
+
+        /* Icon user */
+        #user-icon {
+            display: none;
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            font-size: 2.2em;
+            color: #00ff41;
+            cursor: pointer;
+            text-shadow: 0 0 15px #00ff41;
+            z-index: 99;
+        }
+
+        #user-dropdown {
+            display: none;
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: rgba(0, 20, 0, 0.9);
+            border: 2px solid #00ff41;
+            border-radius: 12px;
+            padding: 15px 20px;
+            width: 220px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.7);
+            z-index: 99;
+        }
+
+        #user-dropdown .welcome {
+            color: #39ff14;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        #user-dropdown .admin-title {
+            color: #ffff66;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 0 0 10px #ffff66, 0 0 20px #ffff66;
+            animation: pulseAdmin 2s infinite alternate;
+        }
+
+        @keyframes pulseAdmin {
+            from { text-shadow: 0 0 10px #ffff66; }
+            to { text-shadow: 0 0 30px #ffff66; }
+        }
+
+        #logout-btn {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 2px solid #ff0044;
+            color: #ff0044;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #logout-btn:hover {
+            background: rgba(255, 0, 68, 0.2);
+            box-shadow: 0 0 20px #ff0044;
+        }
+
+        /* Footer */
+        #footer {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 20, 0, 0.9);
+            border-top: 2px solid #00ff41;
+            padding: 12px;
+            text-align: center;
+            font-size: 1em;
+            color: #39ff14;
+            text-shadow: 0 0 10px #00ff41;
+            z-index: 99;
+        }
+
+        /* Auth screen */
+        #auth-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-box {
+            background: rgba(0, 20, 0, 0.8);
+            border: 3px solid #00ff41;
+            border-radius: 15px;
+            padding: 40px 50px;
+            width: 380px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.8);
+        }
+
+        .auth-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            color: #39ff14;
+            text-shadow: 0 0 20px #00ff41;
+            margin-bottom: 30px;
+        }
+
+        .auth-box input {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            background: #001100;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            color: #00ff41;
+            font-size: 1.1em;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: transparent;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            color: #00ff41;
+            font-size: 1.3em;
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+        }
+
+        .auth-btn:hover {
+            background: rgba(0, 255, 65, 0.2);
+            color: #ffffff;
+        }
+
+        .switch-link {
+            margin-top: 20px;
+            color: #39ff14;
+            cursor: pointer;
+        }
+
+        .switch-link:hover {
+            text-decoration: underline;
+        }
+
+        .status-msg {
+            margin-top: 15px;
+            font-size: 1.1em;
+            min-height: 28px;
+        }
+
+        .error { color: #ff0044; text-shadow: 0 0 15px #ff0044; }
+        .success { color: #39ff14; text-shadow: 0 0 15px #39ff14; }
+
+        /* Main content */
+        #main-content {
+            display: none;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            padding: 80px 20px 100px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            background: rgba(0, 20, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid #00ff41;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8em;
+            color: #00ff41;
+            text-shadow: 0 0 20px #00ff41, 0 0 40px #00ff41;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-size: 1.2em;
+            color: #39ff14;
+            display: block;
+            margin-top: 20px;
+        }
+
+        /* Phần nhập key với nút GET KEY */
+        #key-input-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        #activation-key {
+            flex: 1;
+            min-width: 250px;
+            padding: 15px;
+            background: #001100;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            color: #00ff41;
+            font-size: 1.1em;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+        }
+
+        #get-key-btn {
+            padding: 15px 30px;
+            background: transparent;
+            border: 2px solid #39ff14;
+            border-radius: 8px;
+            color: #39ff14;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.6);
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #get-key-btn:hover {
+            background: rgba(57, 255, 20, 0.2);
+            box-shadow: 0 0 35px rgba(57, 255, 20, 0.9);
+            transform: scale(1.05);
+        }
+
+        input, select {
+            width: 80%;
+            padding: 15px;
+            margin: 15px 0;
+            background: #001100;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            color: #00ff41;
+            font-size: 1.1em;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+        }
+
+        input:focus, select:focus {
+            border-color: #39ff14;
+            box-shadow: 0 0 25px #39ff14;
+            background: #002200;
+        }
+
+        button {
+            width: 80%;
+            padding: 15px;
+            margin: 20px 0;
+            background: transparent;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            color: #00ff41;
+            font-size: 1.3em;
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: rgba(0, 255, 65, 0.1);
+            color: #ffffff;
+            transform: translateY(-3px);
+        }
+
+        #reset-btn {
+            background: transparent;
+            border-color: #ff8800;
+            color: #ff8800;
+        }
+
+        #reset-btn:hover {
+            background: rgba(255, 136, 0, 0.2);
+            box-shadow: 0 0 20px #ff8800;
+        }
+
+        #key-status { margin: 15px 0; font-size: 1.1em; }
+        .locked { color: #ff0044; }
+        .unlocked { color: #39ff14 !important; }
+
+        .hidden-section { display: none; }
+
+        #progress-container {
+            display: none;
+            margin: 40px 0;
+        }
+
+        #progress-bar {
+            width: 80%;
+            height: 35px;
+            background: #001100;
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px auto;
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.6);
+        }
+
+        #progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #003300, #00ff41, #39ff14, #00ff41);
+            background-size: 200% 200%;
+            animation: loadingGlow 2s linear infinite;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #000;
+            text-shadow: 0 0 10px #fff;
+        }
+
+        @keyframes loadingGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        #success-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 15, 0, 0.95);
+            border: 3px solid #00ff41;
+            border-radius: 15px;
+            padding: 40px;
+            width: 480px;
+            max-width: 90%;
+            box-shadow: 0 0 60px rgba(0, 255, 65, 0.9);
+            z-index: 1000;
+            text-align: center;
+        }
+
+        #success-modal .success {
+            color: #39ff14;
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #00ff41;
+        }
+
+        #success-modal p {
+            font-size: 1.2em;
+            margin: 12px 0;
+            color: #00cc00;
+        }
+
+        #success-modal p strong {
+            color: #00ff41;
+        }
+
+        #copy-key-btn {
+            background: transparent;
+            border: 1px solid #39ff14;
+            color: #39ff14;
+            padding: 8px 15px;
+            margin-top: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        #copy-key-btn:hover {
+            background: rgba(57, 255, 20, 0.2);
+        }
+
+        #success-modal .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2.2em;
+            color: #ff0044;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+
+    <!-- Thời gian hiện tại -->
+    <div id="current-time"></div>
+
+    <!-- Beta badge cho admin -->
+    <div id="beta-badge">BETA VERSION</div>
+
+    <!-- Icon user -->
+    <div id="user-icon">🧑</div>
+
+    <!-- Dropdown -->
+    <div id="user-dropdown">
+        <div class="welcome" id="welcome-text">Welcome, user</div>
+        <div id="admin-notice" style="display:none;" class="admin-title">ĐÂY LÀ TÀI KHOẢN ADMIN</div>
+        <button id="logout-btn">ĐĂNG XUẤT</button>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer">
+        Power by <strong>mteditor</strong>
+    </div>
+
+    <!-- Auth screen -->
+    <div id="auth-screen">
+        <div id="login-box" class="auth-box">
+            <h2>ACCESS TERMINAL</h2>
+            <input type="text" id="login-username" placeholder="Username">
+            <input type="password" id="login-password" placeholder="Password">
+            <button id="login-btn" class="auth-btn">LOGIN</button>
+            <div id="auth-status" class="status-msg"></div>
+            <div class="switch-link" id="to-register">Chưa có tài khoản? Đăng Ký</div>
+        </div>
+
+        <div id="register-box" class="auth-box" style="display:none;">
+            <h2>REGISTER NEW ACCOUNT</h2>
+            <div id="reg-status" class="status-msg error">Chức năng đăng ký tài khoản đã bị vô hiệu hóa tạm thời!</div>
+            <div class="switch-link" id="to-login">Quay lại Đăng Nhập</div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div id="main-content">
+        <div class="container">
+            <h1>AIMCONNECTFF<br>DPI BOOSTER</h1>
+
+            <label>Nhập Activation Key:</label>
+            <div id="key-input-container">
+                <input type="text" id="activation-key" placeholder="Nhập key hoặc nhấn GET KEY...">
+                <button id="get-key-btn">GET KEY</button>
+            </div>
+            <div id="key-status" class="locked">System Locked - Yêu cầu key hợp lệ</div>
+
+            <div id="game-section" class="hidden-section">
+                <label>Chọn Game:</label>
+                <select id="game">
+                    <option value="FreeFire">Free Fire</option>
+                    <option value="FreeFireMax">Free Fire Max</option>
+                </select>
+            </div>
+
+            <div id="dpi-section" class="hidden-section">
+                <label>Nhập DPI:</label>
+                <input type="number" id="dpi" placeholder="Ví dụ: 720" min="100" max="2000">
+                <button id="activate-dpi">KÍCH HOẠT DPI</button>
+            </div>
+
+            <div id="aim-section" class="hidden-section">
+                <label>Chọn Loại AIM:</label>
+                <select id="aim-type">
+                    <option value="" disabled selected>Chọn loại AIM...</option>
+                    <option value="AimTrick">AimTrick</option>
+                    <option value="AimBot">AimBot</option>
+                    <option value="AimHead">AimHead</option>
+                    <option value="AimPro">AimPro</option>
+                </select>
+            </div>
+
+            <div id="antiban-section" class="hidden-section">
+                <label>Chọn Antiban:</label>
+                <select id="antiban">
+                    <option value="server:1040_connect">server:1040_connect</option>
+                    <option value="server:7209_connect">server:7209_connect</option>
+                    <option value="server:6180_connect">server:6180_connect</option>
+                </select>
+            </div>
+
+            <button id="connect" class="hidden-section">KẾT NỐI</button>
+            <button id="reset-btn" class="hidden-section">RESET BOOSTER</button>
+
+            <div id="progress-container">
+                <h3>Đang kích hoạt Antiban & Booster...</h3>
+                <div id="progress-bar">
+                    <div id="progress">0%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success modal -->
+    <div id="success-modal">
+        <span class="close-btn" id="close-modal">×</span>
+        <div class="success">SYSTEM BREACHED - ANTIBAN ACTIVATED</div>
+        <p><strong>Target Game:</strong> <span id="modal-game"></span></p>
+        <p><strong>DPI Locked:</strong> <span id="modal-dpi"></span></p>
+        <p><strong>AIM Module:</strong> <span id="modal-aim"></span></p>
+        <p><strong>Antiban Server:</strong> <span id="modal-antiban"></span></p>
+        <p><strong>Activation Key:</strong> <span id="modal-key"></span>
+            <button id="copy-key-btn">Copy Key</button>
+        </p>
+        <p class="expiry">Thời gian sử dụng: Đến hết ngày 31/01/2026</p>
+        <p style="color:#39ff14; margin-top:30px; font-size:1.4em;">
+            Booster đã kích hoạt hoàn toàn!<br>
+            <span style="font-size:0.9em; color:#00cc00;">Chúc bạn headshot liên tục!</span>
+        </p>
+    </div>
+
+    <!-- Sound click -->
+    <audio id="click-sound" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="></audio>
+
+    <script>
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray = [];
+        const numberOfParticles = 60;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.6 - 0.3;
+                this.speedY = Math.random() * 0.6 - 0.3;
+                this.color = ['#00ff41', '#39ff14', '#00cc00'][Math.floor(Math.random() * 3)];
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animate() {
+            particlesArray.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        });
+
+        init();
+        animate();
+
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('vi-VN') + ' | ' + now.toLocaleDateString('vi-VN');
+            document.getElementById('current-time').textContent = timeStr;
+        }
+        setInterval(updateTime, 1000);
+
+        const clickSound = document.getElementById('click-sound');
+        function playClick() {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(() => {});
+        }
+
+        const authScreen = document.getElementById('auth-screen');
+        const loginBox = document.getElementById('login-box');
+        const registerBox = document.getElementById('register-box');
+        const mainContent = document.getElementById('main-content');
+        const userIcon = document.getElementById('user-icon');
+        const userDropdown = document.getElementById('user-dropdown');
+        const welcomeText = document.getElementById('welcome-text');
+        const adminNotice = document.getElementById('admin-notice');
+        const betaBadge = document.getElementById('beta-badge');
+        const currentTime = document.getElementById('current-time');
+        const footer = document.getElementById('footer');
+
+        let currentUser = "";
+
+        // Switch giữa login và register (chỉ để hiển thị thông báo)
+        document.getElementById('to-register').addEventListener('click', () => {
+            loginBox.style.display = 'none';
+            registerBox.style.display = 'block';
+        });
+
+        document.getElementById('to-login').addEventListener('click', () => {
+            registerBox.style.display = 'none';
+            loginBox.style.display = 'block';
+            document.getElementById('auth-status').textContent = '';
+            document.getElementById('auth-status').className = 'status-msg';
+        });
+
+        // Đăng nhập (chỉ hỗ trợ admin)
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+            const status = document.getElementById('auth-status');
+
+            if (!username || !password) {
+                status.textContent = 'Vui lòng nhập username và password';
+                status.className = 'status-msg error';
+                return;
+            }
+
+            if (username.toLowerCase() === 'admin' && password === 'sub010-intervn') {
+                loginSuccess(username);
+            } else {
+                status.textContent = 'ACCESS DENIED - Chỉ hỗ trợ tài khoản admin';
+                status.className = 'status-msg error';
+            }
+        });
+
+        function loginSuccess(username) {
+            currentUser = username;
+            authScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+            userIcon.style.display = 'block';
+            currentTime.style.display = 'block';
+            footer.style.display = 'block';
+            document.body.classList.add('unlocked');
+
+            welcomeText.textContent = 'Welcome, ADMIN';
+            adminNotice.style.display = 'block';
+            betaBadge.style.display = 'block';
+
+            loadSavedSettings();
+            updateTime();
+        }
+
+        function loadSavedSettings() {
+            const saved = JSON.parse(localStorage.getItem('boosterSettings') || '{}');
+            if (saved.dpi) document.getElementById('dpi').value = saved.dpi;
+            if (saved.game) document.getElementById('game').value = saved.game;
+            if (saved.aim) document.getElementById('aim-type').value = saved.aim;
+            if (saved.antiban) document.getElementById('antiban').value = saved.antiban;
+        }
+
+        function saveSettings() {
+            const settings = {
+                game: document.getElementById('game').value,
+                dpi: document.getElementById('dpi').value,
+                aim: document.getElementById('aim-type').value,
+                antiban: document.getElementById('antiban').value
+            };
+            localStorage.setItem('boosterSettings', JSON.stringify(settings));
+        }
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            if (confirm('Bạn có chắc muốn reset toàn bộ setting?')) {
+                document.getElementById('dpi').value = '';
+                document.getElementById('game').value = 'FreeFire';
+                document.getElementById('aim-type').value = '';
+                document.getElementById('antiban').value = 'server:1040_connect';
+                localStorage.removeItem('boosterSettings');
+                alert('Đã reset booster thành công!');
+                playClick();
+            }
+        });
+
+        const correctKey = "testversionbetaaim2026";
+        let isUnlocked = false;
+        let usedKey = "";
+
+        const keyInput = document.getElementById('activation-key');
+        const keyStatus = document.getElementById('key-status');
+        const getKeyBtn = document.getElementById('get-key-btn');
+
+        getKeyBtn.addEventListener('click', () => {
+            if (isUnlocked) return;
+
+            keyInput.value = correctKey;
+            usedKey = correctKey;
+            isUnlocked = true;
+
+            keyStatus.textContent = "✓ System Unlocked! - Key beta đã được áp dụng";
+            keyStatus.classList.remove('locked');
+            keyStatus.classList.add('unlocked');
+
+            document.querySelectorAll('.hidden-section').forEach(el => el.classList.remove('hidden-section'));
+            getKeyBtn.style.display = 'none';
+
+            playClick();
+            alert('Key beta đã được áp dụng tự động!\nKey: testversionbetaaim2026');
+        });
+
+        keyInput.addEventListener('input', () => {
+            const enteredKey = keyInput.value.trim();
+
+            if (enteredKey === correctKey) {
+                isUnlocked = true;
+                usedKey = enteredKey;
+                keyStatus.textContent = "✓ System Unlocked! - Key hợp lệ";
+                keyStatus.classList.remove('locked');
+                keyStatus.classList.add('unlocked');
+
+                document.querySelectorAll('.hidden-section').forEach(el => el.classList.remove('hidden-section'));
+                getKeyBtn.style.display = 'none';
+            } else if (enteredKey === '') {
+                isUnlocked = false;
+                keyStatus.textContent = "System Locked - Yêu cầu key hợp lệ";
+                keyStatus.classList.add('locked');
+                keyStatus.classList.remove('unlocked');
+                getKeyBtn.style.display = 'block';
+            }
+        });
+
+        document.getElementById('connect').addEventListener('click', () => {
+            if (!isUnlocked) return alert('Vui lòng nhập key hợp lệ!');
+
+            const game = document.getElementById('game').value;
+            const dpi = document.getElementById('dpi').value;
+            const aim = document.getElementById('aim-type').value;
+            const antiban = document.getElementById('antiban').value;
+
+            if (!dpi || !aim) return alert('Vui lòng nhập đầy đủ DPI và chọn AIM!');
+
+            saveSettings();
+
+            document.getElementById('progress-container').style.display = 'block';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15 + 5;
+                if (progress > 100) progress = 100;
+                document.getElementById('progress').style.width = progress + '%';
+                document.getElementById('progress').textContent = Math.round(progress) + '%';
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    document.getElementById('progress-container').style.display = 'none';
+
+                    document.getElementById('modal-game').textContent = game === 'FreeFire' ? 'Free Fire' : 'Free Fire Max';
+                    document.getElementById('modal-dpi').textContent = dpi;
+                    document.getElementById('modal-aim').textContent = aim;
+                    document.getElementById('modal-antiban').textContent = antiban;
+                    document.getElementById('modal-key').textContent = usedKey;
+                    document.getElementById('success-modal').style.display = 'block';
+                    playClick();
+                }
+            }, 300);
+        });
+
+        document.getElementById('copy-key-btn').addEventListener('click', () => {
+            navigator.clipboard.writeText(usedKey);
+            alert('Đã copy key thành công!');
+            playClick();
+        });
+
+        document.querySelectorAll('button').forEach(btn => btn.addEventListener('click', playClick));
+
+        userIcon.addEventListener('click', e => {
+            e.stopPropagation();
+            userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', () => userDropdown.style.display = 'none');
+
+        document.getElementById('logout-btn').addEventListener('click', () => location.reload());
+
+        document.getElementById('close-modal').addEventListener('click', () => document.getElementById('success-modal').style.display = 'none');
+    </script>
+</body>
+</html>
